@@ -1,5 +1,32 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) session_start();
+include 'Database.php';
 
+// 1. Cek apakah user sudah login
+if (!isset($_SESSION['user_id'])) {
+  header('Location: login.php?error=not_logged_in');
+  exit; // Wajib ada exit setelah header
+}
+
+// 2. Ambil role dari database berdasarkan session ID
+$stmt = $conn->prepare("SELECT role FROM users WHERE ID = ?");
+$stmt->bind_param('i', $_SESSION['user_id']);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+$stmt->close();
+
+// 3. Cek apakah user ada dan rolenya adalah 'admin'
+if (!$user || $user['role'] !== 'admin') {
+  // Jika tidak, hentikan eksekusi dan tampilkan pesan
+  http_response_code(403); // Kode 'Forbidden'
+  die('<h1>Akses Ditolak</h1><p>Anda tidak memiliki hak untuk mengakses halaman ini.</p>');
+}
+
+// Jika lolos semua pengecekan, sisa halaman admin bisa dimuat di sini...
+include 'header.php';
+echo "<h2>Selamat Datang, Admin!</h2>";
+// ...
 
 if (isset($_POST['add_job'])) {
   $sql = "INSERT INTO jobs (perusahaan, posisi, lokasi, deskripsi, kualifikasi, expiry_date, kontak, dibuat_oleh)
