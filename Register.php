@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $full_name = $conn->real_escape_string($_POST['full_name']);
     $email     = $conn->real_escape_string($_POST['email']);
 
-    $sql = "INSERT INTO users (username,password,full_name,email) VALUES (?,?,?,?)";
+    $sql = "INSERT INTO users (username,password,full_name,email,role) VALUES (?,?,?,?,'user')";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('ssss', $username, $password, $full_name, $email);
     if ($stmt->execute()) {

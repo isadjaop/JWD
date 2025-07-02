@@ -6,7 +6,7 @@ include 'Database.php';
 include 'header.php';
 
 if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php, status=Silahkan Login!');
+    header('Location: login.php?status=Silahkan+Login!');
     exit;
 }
 $stmt = $conn->prepare("SELECT username, full_name, email, role, created_at FROM users WHERE id = ?");
